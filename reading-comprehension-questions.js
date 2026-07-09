@@ -1,9 +1,7 @@
 // Reading Comprehension Questions
-// Source: "قطع خارجية مرشحة للاختبار الوطني" PDF — candidate reading passages
-// for the Iraqi national English exam (wolverines, meteorologists, the Corps
-// of Discovery, robots, A Nation of Immigrants, oil paint, basketball, the
-// Iraqi Marshlands, dates, the wellderly, Nowcasting, story passages, U.S.
-// citizenship, dogs). Each question names its passage so it can stand alone.
+// Original multiple-choice questions on general-knowledge reading topics
+// (nature, science, history, health, culture, and short stories). Each
+// question names its topic so it can stand alone.
 // Format: 4 options, one correct answer (correctIndex is 0-based)
 
 const questions = [
@@ -203,54 +201,54 @@ const questions = [
     correctIndex: 3
   },
 
-  // ===== Ahmed's Journey =====
+  // ===== Karim's Journey =====
   {
     id: "rc032",
-    question: "In the passage about Ahmed, the young Iraqi man traveled to India to:",
+    question: "In the passage about Karim, the young Iraqi man traveled to India to:",
     options: ["Pursue a master's degree", "Start a business", "Visit his relatives", "Learn a new craft"],
     correctIndex: 0
   },
   {
     id: "rc033",
-    question: "According to the passage, Ahmed traveled to India with:",
+    question: "According to the passage, Karim traveled to India with:",
     options: ["His wife", "His friend", "No one", "His father"],
     correctIndex: 2
   },
   {
     id: "rc034",
-    question: "In the Ahmed passage, upon arriving in India Ahmed encountered:",
+    question: "In the Karim passage, upon arriving in India Karim encountered:",
     options: ["Good weather and easy studies", "Obstacles such as cultural differences and the language barrier", "Old friends from Iraq", "A job offer"],
     correctIndex: 1
   },
   {
     id: "rc035",
-    question: "The qualities that contributed to Ahmed's final success were:",
+    question: "The qualities that contributed to Karim's final success were:",
     options: ["Fear and doubt", "Laziness and indifference", "Luck and wealth", "Courage and patience"],
     correctIndex: 3
   },
 
-  // ===== Sarah and the Puppy =====
+  // ===== Layla and the Puppy =====
   {
     id: "rc036",
-    question: "In the story of Sarah, what did she see while walking home from school?",
+    question: "In the story of Layla, what did she see while walking home from school?",
     options: ["A lost puppy wandering on the sidewalk", "A small kitten in a tree", "A stray goat", "A wounded bird"],
     correctIndex: 0
   },
   {
     id: "rc037",
-    question: "In the Sarah story, how did she approach the lost puppy?",
+    question: "In the Layla story, how did she approach the lost puppy?",
     options: ["Quickly and loudly", "Running towards it", "Slowly and quietly", "She ignored it at first"],
     correctIndex: 2
   },
   {
     id: "rc038",
-    question: "The next morning, Sarah:",
+    question: "The next morning, Layla:",
     options: ["Took the puppy to a shelter", "Went door to door in her neighborhood looking for the puppy's owner", "Ignored the puppy and went to school", "Sold the puppy"],
     correctIndex: 1
   },
   {
     id: "rc039",
-    question: "When the puppy's owner saw her pet safe with Sarah, she was:",
+    question: "When the puppy's owner saw her pet safe with Layla, she was:",
     options: ["Angry", "Disappointed", "Sad", "Overjoyed"],
     correctIndex: 3
   },
@@ -307,66 +305,66 @@ const questions = [
     correctIndex: 3
   },
 
-  // ===== Sali and the Bird =====
+  // ===== Nadia and the Bird =====
   {
     id: "rc048",
-    question: "In the story of Sali, the village girl was first known for being:",
+    question: "In the story of Nadia, the village girl was first known for being:",
     options: ["Kind and generous", "Wild and rude", "Lazy and careless", "Rich and proud"],
     correctIndex: 0
   },
   {
     id: "rc049",
-    question: "In the Sali story, after some weeks under Sali's watchful eye, the wounded bird:",
+    question: "In the Nadia story, after some weeks under Nadia's watchful eye, the wounded bird:",
     options: ["Died", "Got worse", "Began to heal", "Broke its leg"],
     correctIndex: 2
   },
   {
     id: "rc050",
-    question: "In the Sali story, the best meaning of the word \"cradle\" (she cradled it in her hand) is:",
+    question: "In the Nadia story, the best meaning of the word \"cradle\" (she cradled it in her hand) is:",
     options: ["To keep in a cage", "To treat carefully", "To give food", "To set free"],
     correctIndex: 1
   },
   {
     id: "rc051",
-    question: "At the end of the story, Sali released the bird:",
+    question: "At the end of the story, Nadia released the bird:",
     options: ["On the ground", "In the garden", "In the desert", "Into the sky"],
     correctIndex: 3
   },
   {
     id: "rc052",
-    question: "The main idea of the Sali passage is:",
-    options: ["Sali's selfless act of love and compassion", "The strength of wild birds", "The beauty of the village", "The danger of wild animals"],
+    question: "The main idea of the Nadia passage is:",
+    options: ["Nadia's selfless act of love and compassion", "The strength of wild birds", "The beauty of the village", "The danger of wild animals"],
     correctIndex: 0
   },
 
-  // ===== Lily and the Mini Bike =====
+  // ===== Rosie and the Mini Bike =====
   {
     id: "rc053",
-    question: "In the Lily story, why was Lily's anger described as \"palpable\"?",
+    question: "In the Rosie story, why was Rosie's anger described as \"palpable\"?",
     options: ["It was misplaced", "It was irrational", "It was so intense it seemed like it could be touched", "It was very difficult to understand"],
     correctIndex: 2
   },
   {
     id: "rc054",
-    question: "In the Lily story, the expression \"par for the course\" implies that something is:",
+    question: "In the Rosie story, the expression \"par for the course\" implies that something is:",
     options: ["To be expected", "Impossible to undo", "Sure to cause anger", "Meant to be hurtful"],
     correctIndex: 0
   },
   {
     id: "rc055",
-    question: "In the Lily story, the best antonym for \"insurmountable\" is:",
+    question: "In the Rosie story, the best antonym for \"insurmountable\" is:",
     options: ["Phony", "Unjustified", "Sane", "Conquerable"],
     correctIndex: 3
   },
   {
     id: "rc056",
-    question: "In the Lily story, the best antonym for \"fervor\" is:",
+    question: "In the Rosie story, the best antonym for \"fervor\" is:",
     options: ["Gluttony", "Indifference", "Politeness", "Quietness"],
     correctIndex: 1
   },
   {
     id: "rc057",
-    question: "In the Lily story, which best describes the act of being \"relegated\"?",
+    question: "In the Rosie story, which best describes the act of being \"relegated\"?",
     options: ["A star athlete is given a coveted award", "The birthday boy is taken to his favorite restaurant", "A disobedient dog is put in the garage to sleep", "A student is given a prize in class"],
     correctIndex: 2
   },
@@ -511,60 +509,60 @@ const questions = [
     correctIndex: 0
   },
 
-  // ===== The Ghost of Endley Farm =====
+  // ===== The Ghost of Elmwood Farm =====
   {
     id: "rc080",
-    question: "In the Endley Farm story, farm hands frequently gave up their jobs because:",
+    question: "In the Elmwood Farm story, farm hands frequently gave up their jobs because:",
     options: ["The pay was too low", "The brothers treated them badly", "They kept waking up to find the work had been done overnight", "They found a lion on the farm"],
     correctIndex: 2
   },
   {
     id: "rc081",
-    question: "In the Endley Farm story, the \"ghost\" turned out to be:",
-    options: ["Bert Cox", "Eric Cox, the eldest son who had been hiding for decades", "The father of the family", "A traveling worker"],
+    question: "In the Elmwood Farm story, the \"ghost\" turned out to be:",
+    options: ["Ben Fox", "Edwin Fox, the eldest son who had been hiding for decades", "The father of the family", "A traveling worker"],
     correctIndex: 1
   },
   {
     id: "rc082",
-    question: "In the story, Eric deserted his regiment during the First World War because:",
+    question: "In the story, Edwin deserted his regiment during the First World War because:",
     options: ["He hated army life", "He was injured", "He got married", "He joined a football team"],
     correctIndex: 0
   },
   {
     id: "rc083",
-    question: "How long was the secret of the Endley Farm ghost kept?",
+    question: "How long was the secret of the Elmwood Farm ghost kept?",
     options: ["Ten years", "Two years", "Four years", "Over forty years"],
     correctIndex: 3
   },
   {
     id: "rc084",
-    question: "In the Endley Farm story, how many people knew the ghost's secret?",
+    question: "In the Elmwood Farm story, how many people knew the ghost's secret?",
     options: ["One", "Two", "Three", "Six"],
     correctIndex: 2
   },
 
-  // ===== Fatima of Cairo =====
+  // ===== Amina of Cairo =====
   {
     id: "rc085",
-    question: "In the story of Fatima of Cairo, she juggled multiple jobs because she:",
+    question: "In the story of Amina of Cairo, she juggled multiple jobs because she:",
     options: ["Loved money", "Wanted to provide a good future for her children", "Planned to buy a house", "Wanted to travel abroad"],
     correctIndex: 1
   },
   {
     id: "rc086",
-    question: "In the Fatima story, her view of education was that it is:",
+    question: "In the Amina story, her view of education was that it is:",
     options: ["The key to a successful life", "Stressful work", "Too expensive", "Only for boys"],
     correctIndex: 0
   },
   {
     id: "rc087",
-    question: "In the Fatima story, her son Zaki was fond of:",
+    question: "In the Amina story, her son Samir was fond of:",
     options: ["Engineering", "Computers and technology", "Trade", "Medicine"],
     correctIndex: 3
   },
   {
     id: "rc088",
-    question: "In the Fatima story, her daughter Hala set her sights on becoming:",
+    question: "In the Amina story, her daughter Dina set her sights on becoming:",
     options: ["A doctor", "A teacher", "An engineer", "A lawyer"],
     correctIndex: 2
   },

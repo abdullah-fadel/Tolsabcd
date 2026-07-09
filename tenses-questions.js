@@ -1,6 +1,6 @@
 // English Tenses Questions
-// Source: "TENSES — Forms / Use / Time Phrases" reference tables PDF
-// (the 12 English tenses: forms, uses, and signal words)
+// Original multiple-choice questions on the twelve English tenses:
+// forms, uses, and signal words.
 // Format: 4 options, one correct answer (correctIndex is 0-based)
 
 const questions = [

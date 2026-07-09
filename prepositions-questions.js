@@ -1,7 +1,6 @@
 // English Prepositions Questions
-// Source: "English Grammar For All Levels" by Murad Sawalmeh — Prepositions
-// chapter (uses of in/at/on/by/with/from/to/for/of..., position of
-// prepositions, verbs and adjectives with prepositions, fixed expressions)
+// Original multiple-choice questions on prepositions of time and place,
+// preposition position rules, and common collocations.
 // Format: 4 options, one correct answer (correctIndex is 0-based)
 
 const questions = [
@@ -26,7 +25,7 @@ const questions = [
   },
   {
     id: "prep004",
-    question: "Which preposition indicates clock time, as in \"Adnan gets up ______ 7:00 o'clock\"?",
+    question: "Which preposition indicates clock time, as in \"Nabil gets up ______ 7:00 o'clock\"?",
     options: ["in", "on", "by", "at"],
     correctIndex: 3
   },
@@ -142,7 +141,7 @@ const questions = [
   },
   {
     id: "prep023",
-    question: "\"I saw Khalid ______ two hours ago.\" (approximately)",
+    question: "\"I saw Faisal ______ two hours ago.\" (approximately)",
     options: ["along", "about", "over", "beside"],
     correctIndex: 1
   },
@@ -154,13 +153,13 @@ const questions = [
   },
   {
     id: "prep025",
-    question: "\"Ahmed sat ______ Ali and Sameer.\" (two people)",
+    question: "\"Waleed sat ______ Zaid and Munir.\" (two people)",
     options: ["among", "beside", "along", "between"],
     correctIndex: 3
   },
   {
     id: "prep026",
-    question: "\"I saw Mohammed sitting ______ the crowd.\" (more than two)",
+    question: "\"I saw Mahmoud sitting ______ the crowd.\" (more than two)",
     options: ["among", "between", "beside", "next"],
     correctIndex: 0
   },
@@ -190,7 +189,7 @@ const questions = [
   },
   {
     id: "prep031",
-    question: "\"Ali was in the room, then he went ______ the living room.\" (movement to the inside)",
+    question: "\"Zaid was in the room, then he went ______ the living room.\" (movement to the inside)",
     options: ["at", "into", "onto", "in front of"],
     correctIndex: 1
   },

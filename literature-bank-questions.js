@@ -1,6 +1,6 @@
 // English Literature Question Bank
-// Source: "1000 Questions & Answers" file (English Literature, Drama, Poetry, Novel,
-// Literary Terms, Criticism & Theory, Linguistics, World Literature)
+// Original multiple-choice questions covering English literary history, drama,
+// poetry, fiction, literary terms, criticism and theory, and world literature.
 // Format: 4 options, one correct answer (correctIndex is 0-based)
 
 const questions = [

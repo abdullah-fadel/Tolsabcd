@@ -1,6 +1,7 @@
 // English Grammar & Language Functions Questions
-// Source: "المغني في الاختبار الوطني الموحد للغة الإنكليزية" (Grammar, Language
-// Functions, Written Conversation, Reading Comprehension skills)
+// Original multiple-choice questions: parts of speech, modals, conditionals,
+// reported speech, relative clauses, word formation, language functions,
+// conversation and reading skills.
 // Format: 4 options, one correct answer (correctIndex is 0-based)
 
 const questions = [
@@ -49,7 +50,7 @@ const questions = [
   },
   {
     id: "gram008",
-    question: "Choose the correct reflexive pronoun: \"Mark hurt ______ on the playground.\"",
+    question: "Choose the correct reflexive pronoun: \"Adel hurt ______ on the playground.\"",
     options: ["himself", "him", "his", "themselves"],
     correctIndex: 0
   },
@@ -117,8 +118,8 @@ const questions = [
   },
   {
     id: "gram019",
-    question: "The past of \"mustn't\" (when the prohibition no longer applied) is expressed by:",
-    options: ["Did not have to", "Must not have", "Could not", "Should not have"],
+    question: "\"He ______ tidy his room because his sister had already done it.\" (no necessity in the past)",
+    options: ["didn't have to", "mustn't", "shouldn't have", "couldn't"],
     correctIndex: 0
   },
   {
@@ -167,7 +168,7 @@ const questions = [
   },
   {
     id: "gram027",
-    question: "\"Ali went to school.\" — To ask about the subject, we say:",
+    question: "\"Zaid went to school.\" — To ask about the subject, we say:",
     options: ["Who did go to school?", "Who did went to school?", "Whom went to school?", "Who went to school?"],
     correctIndex: 3
   },
@@ -273,14 +274,14 @@ const questions = [
   },
   {
     id: "gram044",
-    question: "Tariq said: \"I know all about it.\" — The reported form is:",
-    options: ["Tariq said that he knows all about it.", "Tariq said that he knew all about it.", "Tariq said that I knew all about it.", "Tariq said that he had knew all about it."],
+    question: "Anas said: \"I know all about it.\" — The reported form is:",
+    options: ["Anas said that he knows all about it.", "Anas said that he knew all about it.", "Anas said that I knew all about it.", "Anas said that he had knew all about it."],
     correctIndex: 1
   },
   {
     id: "gram045",
-    question: "Mariam said: \"I am enjoying myself.\" — The reported form is:",
-    options: ["Mariam said she is enjoying herself.", "Mariam said she has been enjoying herself.", "Mariam said I was enjoying myself.", "Mariam said she was enjoying herself."],
+    question: "Rasha said: \"I am enjoying myself.\" — The reported form is:",
+    options: ["Rasha said she is enjoying herself.", "Rasha said she has been enjoying herself.", "Rasha said I was enjoying myself.", "Rasha said she was enjoying herself."],
     correctIndex: 3
   },
   {
@@ -527,7 +528,7 @@ const questions = [
   },
   {
     id: "gram085",
-    question: "\"If I'd gone down to Bodrum as all my friends did, I, too, ______ scuba diving lessons.\"",
+    question: "\"If I'd gone down to the seaside as all my friends did, I, too, ______ scuba diving lessons.\"",
     options: ["had better taken", "should take", "had taken", "could have taken"],
     correctIndex: 3
   },
@@ -607,31 +608,31 @@ const questions = [
   },
   {
     id: "gram098",
-    question: "Sarah: \"I passed my Chinese test.\" — Mother: \"______\"",
+    question: "Zara: \"I passed my Chinese test.\" — Mother: \"______\"",
     options: ["I'm sorry to hear that.", "Congratulations!", "Your father will be angry.", "You are bad at Chinese."],
     correctIndex: 1
   },
   {
     id: "gram099",
-    question: "Eric: \"I failed my English test.\" — Mother: \"______\"",
+    question: "Evan: \"I failed my English test.\" — Mother: \"______\"",
     options: ["Congratulations!", "You're welcome.", "I'm sorry to hear that.", "Well done!"],
     correctIndex: 2
   },
   {
     id: "gram100",
-    question: "Book seller: \"______\" — John: \"Do you have any Harry Potter books?\"",
+    question: "Book seller: \"______\" — Daniel: \"Do you have any Harry Potter books?\"",
     options: ["I don't have any books.", "What do you want?", "Do you want any books?", "May I help you?"],
     correctIndex: 3
   },
   {
     id: "gram101",
-    question: "Mother: \"What does your new teacher look like?\" — Liz: \"______\"",
+    question: "Mother: \"What does your new teacher look like?\" — Amy: \"______\"",
     options: ["She is pretty and has long brown hair.", "She likes to play the piano.", "She teaches me Science.", "She doesn't like to watch cartoons."],
     correctIndex: 0
   },
   {
     id: "gram102",
-    question: "Billy: \"I am sorry, I lost the pencil I borrowed from you.\" — Tony: \"______. It wasn't expensive.\"",
+    question: "Danny: \"I am sorry, I lost the pencil I borrowed from you.\" — Marcus: \"______. It wasn't expensive.\"",
     options: ["I am angry", "Don't worry", "I am sad", "How dare you"],
     correctIndex: 1
   },
@@ -643,13 +644,13 @@ const questions = [
   },
   {
     id: "gram104",
-    question: "Tom: \"My job is very stressful. I want less stress in my life.\" — The best suggestion is:",
+    question: "Harry: \"My job is very stressful. I want less stress in my life.\" — The best suggestion is:",
     options: ["Be patient and do your work.", "No, my job is more stressful than yours.", "Be careful! Unemployed people are more stressed.", "Why don't you find a new job?"],
     correctIndex: 3
   },
   {
     id: "gram105",
-    question: "Adam: \"I am bored.\" — Tom: \"______\" — Adam: \"We can't do that. I don't have enough money for a ticket.\"",
+    question: "Brian: \"I am bored.\" — Harry: \"______\" — Brian: \"We can't do that. I don't have enough money for a ticket.\"",
     options: ["Let's go to the cinema.", "Why don't we watch TV?", "How about playing computer games?", "Why don't we play football?"],
     correctIndex: 0
   },
@@ -663,7 +664,7 @@ const questions = [
   },
   {
     id: "gram107",
-    question: "Man: \"Could you explain the assignment, Miss Smith?\" — Woman: \"Certainly. Read the next chapter and come prepared to discuss it.\" — What are the speakers talking about?",
+    question: "Man: \"Could you explain the assignment, Miss Carter?\" — Woman: \"Certainly. Read the next chapter and come prepared to discuss it.\" — What are the speakers talking about?",
     options: ["The weekend", "The book market", "Homework", "A field trip"],
     correctIndex: 2
   },
@@ -687,20 +688,20 @@ const questions = [
   },
   {
     id: "gram111",
-    question: "Woman: \"Dr. John's class is closed.\" — Man: \"It's offered every term. Why don't you just take it next semester?\" — The man suggests that the woman:",
-    options: ["Complain to the department", "Ask Dr. John for permission", "Wait until next semester to take the class", "Choose a different major"],
+    question: "Woman: \"Dr. Daniel's class is closed.\" — Man: \"It's offered every term. Why don't you just take it next semester?\" — The man suggests that the woman:",
+    options: ["Complain to the department", "Ask Dr. Daniel for permission", "Wait until next semester to take the class", "Choose a different major"],
     correctIndex: 2
   },
   {
     id: "gram112",
-    question: "Woman: \"Let's e-mail our response to Larry instead of calling.\" — Man: \"Larry has an e-mail address?\" — The man had assumed that:",
-    options: ["Larry prefers e-mail", "Larry never answers calls", "Larry has two e-mail accounts", "Larry would not have an e-mail address"],
+    question: "Woman: \"Let's e-mail our response to Barry instead of calling.\" — Man: \"Barry has an e-mail address?\" — The man had assumed that:",
+    options: ["Barry prefers e-mail", "Barry never answers calls", "Barry has two e-mail accounts", "Barry would not have an e-mail address"],
     correctIndex: 3
   },
   {
     id: "gram113",
-    question: "Woman: \"Where's Anita? We were supposed to study at the library.\" — Man: \"Here is her coat, and her books are on the chair.\" — The man implies that:",
-    options: ["Anita has not left for the library yet", "Anita is already at the library", "Anita lost her books", "Anita changed her plans"],
+    question: "Woman: \"Where's Rita? We were supposed to study at the library.\" — Man: \"Here is her coat, and her books are on the chair.\" — The man implies that:",
+    options: ["Rita has not left for the library yet", "Rita is already at the library", "Rita lost her books", "Rita changed her plans"],
     correctIndex: 0
   },
   {
@@ -729,13 +730,13 @@ const questions = [
   },
   {
     id: "gram118",
-    question: "In the interpreter passage, Samira Al Mahmoud prepared for the oil conference by:",
+    question: "In the interpreter passage, Bushra prepared for the oil conference by:",
     options: ["Memorizing all the speeches in advance", "Reading about oil to learn the technical terms", "Visiting an oil field", "Hiring an assistant translator"],
     correctIndex: 1
   },
   {
     id: "gram119",
-    question: "According to Samira, the most important quality of a conference interpreter is:",
+    question: "According to Bushra, the most important quality of a conference interpreter is:",
     options: ["Speaking many dialects", "Writing quickly", "Remaining calm under pressure", "Having a loud voice"],
     correctIndex: 2
   },

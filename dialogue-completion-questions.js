@@ -1,13 +1,12 @@
 // Dialogue Completion Questions
-// Source: "Dialogue Completion — TEST 7" PDF (Book 3). Original items had five
-// options; each item here keeps the correct answer with the three strongest
-// distractors.
+// Original multiple-choice items testing everyday conversational English:
+// choose the response that best completes each dialogue.
 // Format: 4 options, one correct answer (correctIndex is 0-based)
 
 const questions = [
   {
     id: "dlg001",
-    question: "\"We went to Berlin last weekend.\" — \"______\"",
+    question: "\"We went to Vienna last weekend.\" — \"______\"",
     options: ["How did you get there?", "Yes, last weekend was rather rainy.", "My father says he is always tired after work.", "Sure, your teachers are very good."],
     correctIndex: 0
   },
@@ -31,14 +30,14 @@ const questions = [
   },
   {
     id: "dlg005",
-    question: "\"Why, Ann! Are you reading without light? Turn on the lamp, please.\" — \"______\"",
+    question: "\"Why, Emma! Are you reading without light? Turn on the lamp, please.\" — \"______\"",
     options: ["Oh yes, it's getting dark", "Oh, no, I'm too hungry", "Oh yes, it's too light", "Thank you, very well"],
     correctIndex: 0
   },
   {
     id: "dlg006",
     question: "\"Why did the team not win the game?\" — \"______\"",
-    options: ["He was very late.", "I think Nick didn't take part in it.", "Because we were at a party.", "I suppose it began late."],
+    options: ["He was very late.", "I think Fred didn't take part in it.", "Because we were at a party.", "I suppose it began late."],
     correctIndex: 1
   },
   {
@@ -49,13 +48,13 @@ const questions = [
   },
   {
     id: "dlg008",
-    question: "Jane: \"Would you like some more cake?\" — Mike: \"______\"",
+    question: "Nora: \"Would you like some more cake?\" — Alan: \"______\"",
     options: ["Please take a piece of cake.", "No, I've already caught it.", "Thank you for a nice party.", "Thanks, I haven't eaten my first piece yet."],
     correctIndex: 3
   },
   {
     id: "dlg009",
-    question: "Kate: \"I've never played cops and robbers. How do you play it?\" — Robert: \"Everybody plays this game.\" — Kate: \"______\"",
+    question: "Clara: \"I've never played cops and robbers. How do you play it?\" — Victor: \"Everybody plays this game.\" — Clara: \"______\"",
     options: ["Well, will you show me what to do?", "You'll be at the police station.", "Work in a group of four.", "Shall I help you, sir?"],
     correctIndex: 0
   },
@@ -80,7 +79,7 @@ const questions = [
   {
     id: "dlg013",
     question: "\"Who is the best reader in your class?\" — \"______\"",
-    options: ["Pete is, but I read better than he does.", "We take books from the school library.", "We never read books at math lessons.", "My mother doesn't allow me to read books at the library."],
+    options: ["Simon is, but I read better than he does.", "We take books from the school library.", "We never read books at math lessons.", "My mother doesn't allow me to read books at the library."],
     correctIndex: 0
   },
   {
@@ -97,7 +96,7 @@ const questions = [
   },
   {
     id: "dlg016",
-    question: "A: \"Mary is out now.\" B: \"______\" A: \"Not far away.\"",
+    question: "A: \"Diana is out now.\" B: \"______\" A: \"Not far away.\"",
     options: ["What did she study?", "Where are the girls?", "Where is he from?", "Where has she gone?"],
     correctIndex: 3
   },
@@ -152,7 +151,7 @@ const questions = [
   {
     id: "dlg025",
     question: "\"______\" — \"Are you going by bus?\" — \"______\" — \"I'd love to.\"",
-    options: ["We are going to Bath on Monday with Tom / No, we are going in Tom's car. Would you like to come?", "Have you ever been to Bath? / Yes let's go", "Could you go to Bath with us, please? / No, we went in Tom's car", "We have visited Bath lately / Yes, we are"],
+    options: ["We are going to Bath on Monday with Harry / No, we are going in Harry's car. Would you like to come?", "Have you ever been to Bath? / Yes let's go", "Could you go to Bath with us, please? / No, we went in Harry's car", "We have visited Bath lately / Yes, we are"],
     correctIndex: 0
   },
   {
@@ -169,19 +168,19 @@ const questions = [
   },
   {
     id: "dlg028",
-    question: "\"I say, Nick, let us go to the park?\" — \"______. Only I must finish my work first. Can you wait a little?\" — \"______\"",
+    question: "\"I say, Fred, let us go to the park?\" — \"______. Only I must finish my work first. Can you wait a little?\" — \"______\"",
     options: ["Let's / Yes, you can", "Of course / Yes, please", "Certainly / Yes, he can", "All right / Certainly"],
     correctIndex: 3
   },
   {
     id: "dlg029",
-    question: "Kate: \"Have you just shot a new film?\" Jane: \"______\" Kate: \"Are you going to shoot another?\" Jane: \"______\"",
+    question: "Clara: \"Have you just shot a new film?\" Nora: \"______\" Clara: \"Are you going to shoot another?\" Nora: \"______\"",
     options: ["Yes, we have / Yes, next year", "No, we haven't / I think so", "It's a pity / I'm sorry", "The same to you / Sorry, I'm late"],
     correctIndex: 0
   },
   {
     id: "dlg030",
-    question: "Mary: \"Did you pass your exam?\" Ann: \"______\" Mary: \"Was it difficult?\" Ann: \"______\"",
+    question: "Diana: \"Did you pass your exam?\" Emma: \"______\" Diana: \"Was it difficult?\" Emma: \"______\"",
     options: ["No, I haven't / I don't know", "Yes, I did / I don't think it was", "Of course, it was / I'm sorry", "It's a pity / Nice to see you"],
     correctIndex: 1
   },
@@ -217,7 +216,7 @@ const questions = [
   },
   {
     id: "dlg036",
-    question: "Pete: \"I'll tell you a story.\" Jack: \"______\" Pete: \"Well, one day, when my daughter was little…\"",
+    question: "Simon: \"I'll tell you a story.\" Leo: \"______\" Simon: \"Well, one day, when my daughter was little…\"",
     options: ["Oh, no, sir. I'm not free.", "Can't you?", "Was it very interesting?", "Oh, yes, sir. Please, do."],
     correctIndex: 3
   },
@@ -247,7 +246,7 @@ const questions = [
   },
   {
     id: "dlg041",
-    question: "Mother: \"You can't go out skiing today, Bob. It's warm again and there is no snow.\" Bob: \"______\" Mother: \"Don't worry. Today is not the last day of the winter.\"",
+    question: "Mother: \"You can't go out skiing today, Colin. It's warm again and there is no snow.\" Colin: \"______\" Mother: \"Don't worry. Today is not the last day of the winter.\"",
     options: ["Well, that's a pity. I wanted to go skiing so much.", "I'm very glad.", "I don't like to ski.", "I was not going to ski today."],
     correctIndex: 0
   },
@@ -273,7 +272,7 @@ const questions = [
     id: "dlg045",
     question: "The teacher said: \"It is better to give than to receive.\" A small boy said his father used that as his motto in business. The teacher asked: \"What is his business?\" The boy said: \"______\"",
     options: ["He is a boxer.", "He is a cashier.", "He is a postman.", "He is a driver."],
-    correctIndex: 1
+    correctIndex: 0
   },
   {
     id: "dlg046",
@@ -289,8 +288,8 @@ const questions = [
   },
   {
     id: "dlg048",
-    question: "Helen: \"Nick, have you got anything special on tonight?\" Nick: \"______\"",
-    options: ["Oh, Helen, I'm so sorry.", "No, not really. Why?", "No, I didn't.", "Yes, I do."],
+    question: "Grace: \"Fred, have you got anything special on tonight?\" Fred: \"______\"",
+    options: ["Oh, Grace, I'm so sorry.", "No, not really. Why?", "No, I didn't.", "Yes, I do."],
     correctIndex: 1
   },
   {
@@ -325,13 +324,13 @@ const questions = [
   },
   {
     id: "dlg054",
-    question: "\"Meet Kate. She is my friend.\" — \"______. I'm glad to meet you.\" — \"______. Glad to meet you too.\"",
+    question: "\"Meet Clara. She is my friend.\" — \"______. I'm glad to meet you.\" — \"______. Glad to meet you too.\"",
     options: ["How are you? / How do you do?", "O.K. / O.K.", "How is your family? / And what about you?", "How do you do? / How do you do?"],
     correctIndex: 3
   },
   {
     id: "dlg055",
-    question: "\"What's the matter with Dick? He hasn't come to school today.\" — \"______. He has a headache.\" — \"Let's visit him after lessons.\" — \"______\"",
+    question: "\"What's the matter with Ted? He hasn't come to school today.\" — \"______. He has a headache.\" — \"Let's visit him after lessons.\" — \"______\"",
     options: ["He is not well / O.K.", "She is ill / All right", "He is out / Good", "He is well / I'm busy"],
     correctIndex: 0
   },
@@ -343,19 +342,19 @@ const questions = [
   },
   {
     id: "dlg057",
-    question: "\"Why didn't you go to the cinema with us, Susan?\" — \"______\"",
+    question: "\"Why didn't you go to the cinema with us, Paula?\" — \"______\"",
     options: ["I couldn't continue writing.", "I'll mend it within a week.", "I had to stay at home yesterday.", "Thanks to you I've got into the theatre."],
     correctIndex: 2
   },
   {
     id: "dlg058",
-    question: "\"John is going to buy an expensive car.\" — \"______?\" — \"He told me that himself.\"",
+    question: "\"Daniel is going to buy an expensive car.\" — \"______?\" — \"He told me that himself.\"",
     options: ["Where did you take it", "Are you in need of food", "Do you live in the South", "How do you know"],
     correctIndex: 3
   },
   {
     id: "dlg059",
-    question: "\"Tommy, your mother is a teacher and you cannot write a word.\" — \"______\"",
+    question: "\"Bobby, your mother is a teacher and you cannot write a word.\" — \"______\"",
     options: ["Your father is a dentist and your little brother has no teeth", "Your mother is a good housewife", "Your aunt can't go to the mountains with us", "Your mother wanted to see us both"],
     correctIndex: 0
   },
@@ -367,7 +366,7 @@ const questions = [
   },
   {
     id: "dlg061",
-    question: "\"Ken, you live in Riverton, how do you like it?\" — \"______\" — \"Ann and I want to move. Our apartment is too small for us.\"",
+    question: "\"Ross, you live in Greenford, how do you like it?\" — \"______\" — \"Emma and I want to move. Our apartment is too small for us.\"",
     options: ["I don't know", "There is a playground there", "It's a nice town. Why do you ask?", "Oh, I like it very much"],
     correctIndex: 2
   },
@@ -427,13 +426,13 @@ const questions = [
   },
   {
     id: "dlg071",
-    question: "\"Have you heard the news? Mary and Nick are engaged.\" — \"______ Mary didn't like him, did she?\" — \"______\"",
+    question: "\"Have you heard the news? Diana and Fred are engaged.\" — \"______ Diana didn't like him, did she?\" — \"______\"",
     options: ["Really? / That's right", "That's right / Really", "She couldn't / No, she didn't", "I'm sure of it / You are right"],
     correctIndex: 0
   },
   {
     id: "dlg072",
-    question: "\"Will you have some more chicken?\" — \"______. I'm full.\" — \"And you, Mr. Thompson?\" — \"______, just a little. It's delicious.\"",
+    question: "\"Will you have some more chicken?\" — \"______. I'm full.\" — \"And you, Mr. Anderson?\" — \"______, just a little. It's delicious.\"",
     options: ["Yes / No", "No, thank you / Yes, please", "A little more / No, thank you", "Of course / Certainly"],
     correctIndex: 1
   },
@@ -463,19 +462,19 @@ const questions = [
   },
   {
     id: "dlg077",
-    question: "Mike: \"What are you doing, Alice?\" Alice: \"______\" Mike: \"Why? Let me see what's the matter with it.\"",
+    question: "Alan: \"What are you doing, Nina?\" Nina: \"______\" Alan: \"Why? Let me see what's the matter with it.\"",
     options: ["I'm looking for my sister.", "I'm going home.", "I can't close my bag.", "I'm reading a book."],
     correctIndex: 2
   },
   {
     id: "dlg078",
-    question: "Mike: \"Let me go and buy the newspapers for you, Dad?\" Father: \"______\"",
+    question: "Alan: \"Let me go and buy the newspapers for you, Dad?\" Father: \"______\"",
     options: ["I have already bought them.", "You can buy them.", "A good idea.", "Do, please."],
     correctIndex: 3
   },
   {
     id: "dlg079",
-    question: "Bob: \"What about going to the cinema?\" Tom: \"______\" Bob: \"You can do your work after cinema.\"",
+    question: "Colin: \"What about going to the cinema?\" Harry: \"______\" Colin: \"You can do your work after cinema.\"",
     options: ["I have a lot of things to do", "With pleasure", "I like going to the cinema very much", "I am afraid I can't"],
     correctIndex: 0
   },
@@ -499,8 +498,8 @@ const questions = [
   },
   {
     id: "dlg083",
-    question: "\"______\" — \"No, I'm waiting for Tom.\" — \"______\" — \"I'm not in a hurry. I'll wait till he's ready.\"",
-    options: ["Aren't you coming with us? / But he won't be ready for some time", "Who are you waiting for? / He is out", "You are waiting for Sally, aren't you? / She has just left", "Did you come yesterday? / With pleasure"],
+    question: "\"______\" — \"No, I'm waiting for Harry.\" — \"______\" — \"I'm not in a hurry. I'll wait till he's ready.\"",
+    options: ["Aren't you coming with us? / But he won't be ready for some time", "Who are you waiting for? / He is out", "You are waiting for Tina, aren't you? / She has just left", "Did you come yesterday? / With pleasure"],
     correctIndex: 0
   },
   {
@@ -517,8 +516,8 @@ const questions = [
   },
   {
     id: "dlg086",
-    question: "A: \"What are you doing, Bob?\" B: \"______\" A: \"What are you writing to him about?\" B: \"Don't ask so many questions ______\"",
-    options: ["I'm going to write a letter / There is no time left", "I'm going to visit my uncle / He is ill", "I'm busy writing a letter to you / Are you going to read it?", "I'm writing a letter to Helen / Curiosity killed the cat"],
+    question: "A: \"What are you doing, Colin?\" B: \"______\" A: \"What are you writing to him about?\" B: \"Don't ask so many questions ______\"",
+    options: ["I'm going to write a letter / There is no time left", "I'm going to visit my uncle / He is ill", "I'm busy writing a letter to you / Are you going to read it?", "I'm writing a letter to Grace / Curiosity killed the cat"],
     correctIndex: 3
   },
   {
@@ -560,13 +559,13 @@ const questions = [
   {
     id: "dlg093",
     question: "A: \"Do you know the men standing over there?\" B: \"Yes, of course.\" A: \"What are they?\" B: \"______\"",
-    options: ["They are Pete and Mike.", "This man is John Smith.", "They are famous sportsmen.", "They are kind."],
+    options: ["They are Simon and Alan.", "This man is Daniel Smith.", "They are famous sportsmen.", "They are kind."],
     correctIndex: 2
   },
   {
     id: "dlg094",
     question: "\"______\" — \"Yes, I'm packing because I'm going to catch a plane to New York in three hours' time.\" — \"Lucky girl! How long are you staying in New York?\" — \"______\"",
-    options: ["Where were you going? / For a year", "Have you already done everything? / Certainly", "What will you be doing? / At 5 tomorrow", "Are you doing anything at the moment, Sally? / For a fortnight"],
+    options: ["Where were you going? / For a year", "Have you already done everything? / Certainly", "What will you be doing? / At 5 tomorrow", "Are you doing anything at the moment, Tina? / For a fortnight"],
     correctIndex: 3
   }
 ];
