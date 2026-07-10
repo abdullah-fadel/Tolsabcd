@@ -182,7 +182,22 @@
   .fbtn{background:var(--surface2); border:1px solid var(--line); color:var(--muted); padding:7px 18px; font-size:.88rem; font-weight:700}
   .fbtn.active{background:var(--accent); color:var(--on-accent); border-color:var(--accent)}
   .hidden{display:none}
+
+  /* ======== نافذة التأكيد المدمجة ======== */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal{
+    direction:rtl; background:var(--surface); border:1px solid var(--line);
+    border-radius:16px; box-shadow:var(--shadow); padding:26px 24px;
+    max-width:420px; width:100%; text-align:center;
+  }
+  .modal p{margin:0 0 20px; font-size:1.05rem; line-height:1.9}
+  .modal-actions{display:flex; gap:10px; justify-content:center}
+  .modal-actions .btn-primary{padding:11px 28px; font-size:1rem}
   @media (max-width:560px){
+
     .qtext{font-size:1.1rem}
     .start-card{padding:28px 18px; margin-top:4vh}
     .exam-bar{flex-wrap:wrap}
@@ -383,13 +398,29 @@ function gradeLabel(score){
   return ["دون المستوى — أعد المحاولة", "var(--bad)"];
 }
 
+function askConfirm(msg, onYes){
+  const ov = document.createElement("div");
+  ov.className = "modal-overlay";
+  ov.innerHTML = '<div class="modal" role="dialog" aria-modal="true"><p>' + msg + '</p>'
+    + '<div class="modal-actions">'
+    + '<button class="btn-primary" id="m-yes">نعم، أنهِ الاختبار</button>'
+    + '<button class="btn-secondary" id="m-no">متابعة الحل</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+  ov.querySelector("#m-yes").onclick = () => { ov.remove(); onYes(); };
+  ov.querySelector("#m-no").onclick = () => ov.remove();
+  ov.onclick = e => { if(e.target === ov) ov.remove(); };
+  ov.querySelector("#m-yes").focus();
+}
+
 function finish(auto){
   if(!auto){
     const unanswered = exam.filter(q => q.answer === null).length;
     const msg = unanswered > 0
-      ? "لديك " + unanswered + " سؤالاً بلا إجابة. هل تريد إنهاء الاختبار؟"
+      ? "لديك " + unanswered + " سؤالاً بلا إجابة. هل تريد إنهاء الاختبار وعرض النتيجة؟"
       : "هل تريد إنهاء الاختبار وعرض النتيجة؟";
-    if(!confirm(msg)) return;
+    askConfirm(msg, () => finish(true));
+    return;
   }
   clearInterval(timerId);
   const elapsed = Math.min(EXAM_SECONDS, Math.round((Date.now() - startedAt)/1000));
