@@ -8,8 +8,7 @@
       "duration_minutes": 60,
       "total_score": 100,
       "question_count": 60,
-      "bank_size": 510,
-      "data_file": "data/arabic.json"
+      "bank_size": 510
     },
     {
       "examId": "english",
@@ -18,8 +17,7 @@
       "duration_minutes": 60,
       "total_score": 100,
       "question_count": 60,
-      "bank_size": 700,
-      "data_file": "data/english.json"
+      "bank_size": 700
     },
     {
       "examId": "computer",
@@ -28,8 +26,7 @@
       "duration_minutes": 60,
       "total_score": 100,
       "question_count": 60,
-      "bank_size": 567,
-      "data_file": "data/computer.json"
+      "bank_size": 567
     }
   ]
 }

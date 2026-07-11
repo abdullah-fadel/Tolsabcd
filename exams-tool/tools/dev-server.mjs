@@ -10,7 +10,7 @@ import { readFile } from "node:fs/promises";
 import { join, normalize, extname } from "node:path";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createSession, gradeSession } from "../server/exam-api.js";
+import { createSession, getQuestions, gradeSession } from "../server/exam-api.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PORT = process.env.PORT || 8788;
@@ -48,7 +48,10 @@ createServer(async (req, res) => {
     } catch {
       return json(res, 400, { error: "bad_json" });
     }
-    const handler = path === "/api/session" ? createSession : path === "/api/grade" ? gradeSession : null;
+    const handler =
+      path === "/api/session" ? createSession :
+      path === "/api/questions" ? getQuestions :
+      path === "/api/grade" ? gradeSession : null;
     if (!handler) return json(res, 404, { error: "not_found" });
     const result = await handler(parsed, SECRET);
     return json(res, result.status, result.status === 200 ? result.data : { error: result.error, message: result.message });

@@ -1,8 +1,10 @@
 /**
  * worker.js — Cloudflare Worker لأداة الاختبارات.
  * المسارات:
- *   POST /api/session  → إنشاء جلسة اختبار (اختيار 60 سؤالاً عشوائياً + توقيت)
- *   POST /api/grade    → تصحيح الإجابات (الإجابات الصحيحة سرية هنا فقط)
+ *   POST /api/session   → إنشاء جلسة اختبار (اختيار 60 سؤالاً عشوائياً + توقيت)
+ *   POST /api/questions → تسليم أسئلة صفحة واحدة (20 سؤالاً) مشفرة AES-GCM —
+ *                         نصوص الأسئلة لا توجد في أي ملف يصل للمتصفح
+ *   POST /api/grade     → تصحيح الإجابات (الإجابات الصحيحة سرية هنا فقط)
  * الملفات الثابتة (index.html, exam.html, ...) تُقدَّم عبر Workers Assets
  * حسب wrangler.toml — مجلدات server/ و question-banks/ و tools/ مستبعدة
  * عبر .assetsignore فلا تصل للمتصفح أبداً.
@@ -10,7 +12,7 @@
  * الإعداد المطلوب: wrangler secret put EXAM_SECRET
  * اختياري: متغير ALLOWED_ORIGINS (قائمة أصول مفصولة بفواصل) لتقييد الوصول.
  */
-import { createSession, gradeSession } from "./exam-api.js";
+import { createSession, getQuestions, gradeSession } from "./exam-api.js";
 
 // حد بسيط للطلبات لكل IP (لكل isolate — رادع أولي، والأفضل إضافة
 // قاعدة Rate Limiting من لوحة Cloudflare للحماية الكاملة)
@@ -94,6 +96,7 @@ export default {
 
     let result;
     if (url.pathname === "/api/session") result = await createSession(body, secret);
+    else if (url.pathname === "/api/questions") result = await getQuestions(body, secret);
     else if (url.pathname === "/api/grade") result = await gradeSession(body, secret);
     else return new Response(JSON.stringify({ error: "not_found" }), { status: 404, headers });
 

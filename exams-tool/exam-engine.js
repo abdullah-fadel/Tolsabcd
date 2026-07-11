@@ -3,14 +3,20 @@
  * جزء من منصة مكتبة الإنجاز الإلكترونية.
  *
  * يعمل بلا خطوات بناء (vanilla JS). أي اختبار يُعرَّف في data/manifest.json
- * يعمل تلقائياً بنفس المحرك — بيانات كل مادة بملفها الخاص.
+ * يعمل تلقائياً بنفس المحرك — بيانات كل مادة بملفها الخاص في السيرفر.
  *
- * أهم النقاط:
- *  - الأسئلة تُختار في السيرفر (60 من بنك كامل) والتصحيح يصير في السيرفر حصراً؛
- *    ملفات data/*.json لا تحتوي أي إجابة صحيحة.
- *  - إعادة الاختبار = أسئلة مختلفة: معرّفات الأسئلة التي ظهرت للطالب تُحفَظ
- *    محلياً وتُرسَل عند بدء أي جلسة جديدة فيستبعدها السيرفر من الاختيار،
+ * نموذج الحماية:
+ *  - لا يوجد أي ملف ثابت يحتوي أسئلة: المتصفح يستلم 20 سؤالاً فقط (صفحته
+ *    الحالية) من /api/questions، والحمولة مشفرة AES-GCM بمفتاح مشتق من توكن
+ *    الجلسة — تبويب Network لا يعرض أي نص سؤال.
+ *  - الأسئلة المفكوكة تعيش في ذاكرة JavaScript فقط — لا تُكتب في localStorage
+ *    أو sessionStorage إطلاقاً، فتبويب Application فارغ منها.
+ *  - التصحيح والإجابات الصحيحة في السيرفر حصراً.
+ *  - إعادة الاختبار = أسئلة مختلفة: معرّفات الأسئلة (وليس نصوصها) التي ظهرت
+ *    للطالب تُحفَظ محلياً وتُرسَل عند بدء أي جلسة جديدة فيستبعدها السيرفر،
  *    حتى تكتمل دورة البنك كله فتبدأ دورة جديدة.
+ *  - أثناء الاختبار: كاشف فتحٍ لأدوات المطوّر يحجب الأسئلة بطبقة تغطية
+ *    (رادع، وليس حماية مطلقة — فلا وجود لها في أي أداة تعمل بالمتصفح).
  */
 (function () {
   "use strict";
@@ -63,6 +69,34 @@
     try { storage.setItem(key, JSON.stringify(value)); } catch (e) { /* مساحة ممتلئة */ }
   }
 
+  /* ====== فك تشفير حمولة الأسئلة (AES-GCM بمفتاح مشتق من التوكن) ====== */
+
+  function b64urlToBytes(str) {
+    var pad = "=".repeat((4 - (str.length % 4)) % 4);
+    var s = atob(str.replace(/-/g, "+").replace(/_/g, "/") + pad);
+    var bytes = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) bytes[i] = s.charCodeAt(i);
+    return bytes;
+  }
+
+  function decryptQuestions(token, encPayload) {
+    var encoder = new TextEncoder();
+    return crypto.subtle.digest("SHA-256", encoder.encode("enjaz-exam-q1|" + token))
+      .then(function (digest) {
+        return crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["decrypt"]);
+      })
+      .then(function (key) {
+        return crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: b64urlToBytes(encPayload.iv) },
+          key,
+          b64urlToBytes(encPayload.data)
+        );
+      })
+      .then(function (plain) {
+        return JSON.parse(new TextDecoder().decode(plain));
+      });
+  }
+
   /* ====== سجل الأسئلة التي شاهدها الطالب (لإعادة الاختبار بأسئلة مختلفة) ====== */
 
   function seenKey(examId) { return "enjaz.exam.seen." + examId; }
@@ -84,7 +118,8 @@
     try { localStorage.removeItem(seenKey(examId)); } catch (e) {}
   }
 
-  /* ====== الجلسة النشطة (تنجو من تحديث الصفحة، وتنتهي بالتسليم) ====== */
+  /* ====== الجلسة النشطة (تنجو من تحديث الصفحة، وتنتهي بالتسليم) ======
+     تحتوي التوكن ووقت الانتهاء والإجابات فقط — لا نصوص أسئلة أبداً */
 
   function activeKey(examId) { return "enjaz.exam.active." + examId; }
 
@@ -141,17 +176,36 @@
     });
   }
 
-  /* ================= تحميل بيانات الاختبار ================= */
+  /* ====== كاشف أدوات المطوّر: يحجب الأسئلة بطبقة تغطية أثناء فتحها ======
+     يعتمد فرق أبعاد النافذة (يكشف اللوحة الملتصقة). رادع إضافي فقط. */
+
+  function startDevtoolsGuard() {
+    if (Math.min(screen.width, screen.height) < 700) return null; // أجهزة الموبايل لا تملك DevTools
+    var overlay = el("div", "devtools-guard hidden");
+    var box = el("div", "devtools-guard-box");
+    box.appendChild(el("h3", null, "⚠️ تم رصد فتح أدوات المطوّر"));
+    box.appendChild(el("p", null, "أغلق أدوات المطوّر للمتابعة — الأسئلة محجوبة الآن، والمؤقّت مستمر بالعدّ."));
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    var THRESHOLD = 200;
+    function check() {
+      var open =
+        window.outerWidth - window.innerWidth > THRESHOLD ||
+        window.outerHeight - window.innerHeight > THRESHOLD + 100;
+      overlay.classList.toggle("hidden", !open);
+    }
+    check();
+    var handle = setInterval(check, 700);
+    return function stop() {
+      clearInterval(handle);
+      overlay.remove();
+    };
+  }
+
+  /* ================= تحميل بيانات الاختبارات (وصفية فقط — بلا أسئلة) ================= */
 
   function loadManifest() { return fetchJSON("data/manifest.json"); }
-
-  function loadBank(examMeta) {
-    return fetchJSON(examMeta.data_file).then(function (bank) {
-      var map = {};
-      bank.questions.forEach(function (q) { map[q.id] = q; });
-      return map;
-    });
-  }
 
   /* ================= صفحة اختيار الاختبار ================= */
 
@@ -193,11 +247,12 @@
     var root = $("#exam-root");
     var state = {
       examId: examId,
-      meta: null,       // من manifest
-      bank: null,       // id → سؤال (بدون إجابات)
-      session: null,    // {token, qs:[{id,points}], endLocal, answers:{}}
+      meta: null,        // من manifest
+      session: null,     // {examId, token, endLocal, answers:{}} — بلا أسئلة
+      pages: {},         // أسئلة مفكوكة التشفير — في الذاكرة فقط، لا تُخزَّن أبداً
       pageIndex: 0,
       timerHandle: null,
+      guardStop: null,
       submitting: false,
     };
 
@@ -211,10 +266,6 @@
         if (!state.meta) throw new Error("اختبار غير معروف");
         $("#exam-name").textContent = state.meta.title;
         document.title = state.meta.title + " | مكتبة الإنجاز";
-        return loadBank(state.meta);
-      })
-      .then(function (bank) {
-        state.bank = bank;
         var resumed = getActiveSession(examId);
         if (resumed) {
           state.session = resumed;
@@ -224,15 +275,19 @@
         }
       })
       .catch(function (err) {
-        root.innerHTML = "";
-        var box = el("div", "notice error");
-        box.appendChild(el("h3", null, "تعذّر تحميل الاختبار"));
-        box.appendChild(el("p", null, err.message || "خطأ غير متوقع"));
-        var back = el("a", "btn btn-navy", "العودة للرئيسية");
-        back.href = "index.html";
-        box.appendChild(back);
-        root.appendChild(box);
+        showFatal(err.message || "خطأ غير متوقع");
       });
+
+    function showFatal(message) {
+      root.innerHTML = "";
+      var box = el("div", "notice error");
+      box.appendChild(el("h3", null, "تعذّر تحميل الاختبار"));
+      box.appendChild(el("p", null, message));
+      var back = el("a", "btn btn-navy", "العودة للرئيسية");
+      back.href = "index.html";
+      box.appendChild(back);
+      root.appendChild(box);
+    }
 
     /* ----- شاشة الاستعداد (تأكيد قبل بدء العد التنازلي) ----- */
     function showIntro() {
@@ -277,13 +332,12 @@
       }).then(function (data) {
         // السيرفر أعاد الدورة من كامل البنك (استُهلكت الأسئلة غير المشاهدة)
         if (data.exclusionsReset) clearSeenIds(examId);
-        // سجّل أسئلة هذه الجلسة فوراً حتى لا تتكرر في المحاولة القادمة
+        // سجّل معرّفات أسئلة هذه الجلسة فوراً حتى لا تتكرر في المحاولة القادمة
         addSeenIds(examId, data.questions.map(function (q) { return q.id; }));
 
         state.session = {
           examId: examId,
           token: data.token,
-          qs: data.questions,
           endLocal: Date.now() + (data.expiresAt - data.serverNow),
           answers: {},
         };
@@ -292,10 +346,22 @@
       });
     }
 
+    /* ----- جلب أسئلة صفحة (مشفرة) وفكّها في الذاكرة فقط ----- */
+    function loadPage(pageIdx) {
+      if (state.pages[pageIdx]) return Promise.resolve(state.pages[pageIdx]);
+      return api("/api/questions", { token: state.session.token, page: pageIdx })
+        .then(function (data) { return decryptQuestions(state.session.token, data.enc); })
+        .then(function (payload) {
+          state.pages[pageIdx] = payload.questions;
+          return payload.questions;
+        });
+    }
+
     /* ----- واجهة الاختبار ----- */
     function startExamUI() {
       state.pageIndex = 0;
       $("#exam-topbar").classList.remove("hidden");
+      state.guardStop = startDevtoolsGuard();
       renderPage();
       startTimer();
     }
@@ -306,9 +372,30 @@
 
     function renderPage() {
       root.innerHTML = "";
-      var qs = state.session.qs;
+      root.appendChild(el("div", "loading", "جارٍ تحميل أسئلة الصفحة " + (state.pageIndex + 1) + "…"));
+
+      loadPage(state.pageIndex)
+        .then(function (questions) { renderQuestions(questions); })
+        .catch(function (err) {
+          root.innerHTML = "";
+          var box = el("div", "notice error");
+          box.appendChild(el("h3", null, err.code === "session_expired" ? "انتهت مدة الاختبار" : "تعذّر تحميل الأسئلة"));
+          box.appendChild(el("p", null, err.message || "خطأ في الاتصال"));
+          if (err.code === "session_expired") {
+            // انتهى الوقت أثناء التنقل — سلّم ما لديه (السيرفر يقبل ضمن السماحية)
+            submitAnswers(true);
+            return;
+          }
+          var again = el("button", "btn btn-gold", "إعادة المحاولة");
+          again.addEventListener("click", renderPage);
+          box.appendChild(again);
+          root.appendChild(box);
+        });
+    }
+
+    function renderQuestions(questions) {
+      root.innerHTML = "";
       var startIdx = state.pageIndex * PAGE_SIZE;
-      var pageQs = qs.slice(startIdx, startIdx + PAGE_SIZE);
 
       // مؤشر الصفحات
       var pager = el("div", "pager-info");
@@ -322,10 +409,8 @@
 
       var letters = ["أ", "ب", "ج", "د"];
 
-      pageQs.forEach(function (q, i) {
+      questions.forEach(function (q, i) {
         var globalIdx = startIdx + i;
-        var bankQ = state.bank[q.id];
-        if (!bankQ) return;
 
         var card = el("div", "question-card");
         var head = el("div", "q-head");
@@ -333,12 +418,12 @@
         head.appendChild(el("div", "q-points", q.points + " درجة"));
         card.appendChild(head);
 
-        var text = el("div", "q-text", bankQ.text);
+        var text = el("div", "q-text", q.text);
         text.setAttribute("dir", "auto");
         card.appendChild(text);
 
         var opts = el("div", "options");
-        var order = optionOrder(state.session.token, q.id, bankQ.options.length);
+        var order = optionOrder(state.session.token, q.id, q.options.length);
         var saved = state.session.answers[q.id];
 
         order.forEach(function (originalIdx, displayIdx) {
@@ -360,7 +445,7 @@
           });
           label.appendChild(input);
           label.appendChild(el("span", "opt-letter", letters[displayIdx] + "."));
-          var optText = el("span", null, bankQ.options[originalIdx]);
+          var optText = el("span", null, q.options[originalIdx]);
           optText.setAttribute("dir", "auto");
           label.appendChild(optText);
           opts.appendChild(label);
@@ -389,7 +474,7 @@
       root.appendChild(nav);
 
       updateAnsweredCounter();
-      window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+      window.scrollTo(0, 0);
     }
 
     function gotoPage(idx) {
@@ -399,7 +484,7 @@
 
     function updateAnsweredCounter() {
       $("#answered-count").textContent =
-        "أجبت " + answeredCount() + " من " + state.session.qs.length;
+        "أجبت " + answeredCount() + " من " + state.meta.question_count;
     }
 
     /* ----- المؤقّت ----- */
@@ -425,7 +510,7 @@
 
     /* ----- التسليم ----- */
     function confirmSubmit() {
-      var unanswered = state.session.qs.length - answeredCount();
+      var unanswered = state.meta.question_count - answeredCount();
       var modal = $("#submit-modal");
       var msg = $("#submit-modal-msg");
       msg.innerHTML = "";
@@ -451,6 +536,7 @@
       if (state.submitting) return;
       state.submitting = true;
       if (state.timerHandle) clearInterval(state.timerHandle);
+      if (state.guardStop) { state.guardStop(); state.guardStop = null; }
 
       root.innerHTML = "";
       root.appendChild(el("div", "loading", auto ? "انتهى الوقت — جارٍ التسليم والتصحيح…" : "جارٍ التصحيح…"));
@@ -460,10 +546,10 @@
         answers: state.session.answers,
       })
         .then(function (result) {
+          state.pages = {}; // تفريغ الأسئلة من الذاكرة
           writeStore(sessionStorage, "enjaz.exam.result", {
             examId: examId,
             result: result,
-            answers: state.session.answers,
           });
           clearActiveSession(examId);
           location.replace("result.html");
@@ -515,9 +601,7 @@
       .then(function (manifest) {
         var meta = manifest.exams.find(function (e) { return e.examId === examId; });
         $("#result-exam-name").textContent = meta ? meta.title : "";
-        return loadBank(meta);
-      })
-      .then(function (bank) {
+
         root.innerHTML = "";
 
         // لوحة الدرجة
@@ -555,7 +639,7 @@
         panel.appendChild(actions);
         root.appendChild(panel);
 
-        // مراجعة الأسئلة الخاطئة
+        // مراجعة الأسئلة الخاطئة (نصوصها تأتي من ردّ التصحيح — بعد انتهاء الجلسة)
         if (!result.review || result.review.length === 0) {
           root.appendChild(el("div", "all-correct", "🎉 أجبت على جميع الأسئلة إجابة صحيحة — أحسنت!"));
           return;
@@ -565,10 +649,8 @@
         root.appendChild(el("p", "review-note", "لكل سؤال: إجابتك ثم الإجابة الصحيحة — راجعها قبل إعادة الاختبار."));
 
         result.review.forEach(function (item) {
-          var q = bank[item.id];
-          if (!q) return;
           var card = el("div", "review-card");
-          var text = el("div", "q-text", q.text);
+          var text = el("div", "q-text", item.text);
           text.setAttribute("dir", "auto");
           card.appendChild(text);
 
@@ -578,7 +660,7 @@
             yours.textContent = "✖ لم تُجب على هذا السؤال";
           } else {
             yours.appendChild(document.createTextNode("✖ إجابتك:"));
-            var yoursText = el("b", null, q.options[item.chosen]);
+            var yoursText = el("b", null, item.options[item.chosen]);
             yoursText.setAttribute("dir", "auto");
             yours.appendChild(yoursText);
           }
@@ -586,7 +668,7 @@
 
           var correct = el("div", "review-answer correct");
           correct.appendChild(document.createTextNode("✔ الإجابة الصحيحة:"));
-          var correctText = el("b", null, q.options[item.correct]);
+          var correctText = el("b", null, item.options[item.correct]);
           correctText.setAttribute("dir", "auto");
           correct.appendChild(correctText);
           card.appendChild(correct);

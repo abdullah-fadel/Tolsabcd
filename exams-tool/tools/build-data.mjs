@@ -4,10 +4,11 @@
  *
  * المدخلات:  exams-tool/question-banks/*.js   (تحتوي correctIndex — لا تُنشر أبداً)
  * المخرجات:
- *   exams-tool/data/<examId>.json    ← أسئلة بدون إجابات (تُحمَّل بالمتصفح)
- *   exams-tool/data/manifest.json    ← قائمة الاختبارات وبياناتها
- *   exams-tool/server/answer-keys.js ← id → correctIndex (يُحزم داخل الـ Worker فقط)
- *   exams-tool/server/bank-index.js  ← id lists per exam (للـ Worker)
+ *   exams-tool/data/manifest.json        ← قائمة الاختبارات وبياناتها الوصفية فقط
+ *   exams-tool/server/questions-data.js  ← نصوص الأسئلة والخيارات (داخل الـ Worker فقط —
+ *                                          لا يوجد أي ملف أسئلة يُقدَّم للمتصفح)
+ *   exams-tool/server/answer-keys.js     ← id → correctIndex (داخل الـ Worker فقط)
+ *   exams-tool/server/bank-index.js      ← قوائم المعرّفات لكل اختبار (للـ Worker)
  *
  * التشغيل:  node exams-tool/tools/build-data.mjs
  */
@@ -64,13 +65,15 @@ const DURATION_MINUTES = 60;
 const TOTAL_SCORE = 100;
 
 const manifest = { version: "1.0", exams: [] };
-const answerKeys = {}; // examId → { qid: correctIndex }
-const bankIndex = {};  // examId → [qid, ...]
+const answerKeys = {};    // examId → { qid: correctIndex }
+const bankIndex = {};     // examId → [qid, ...]
+const questionsData = {}; // examId → { qid: {t: نص, o: [خيارات] } } — سيرفر فقط
 
 for (const exam of EXAMS) {
   const seen = new Set();
-  const publicQuestions = [];
   const keys = {};
+  const content = {};
+  const ids = [];
 
   for (const src of exam.sources) {
     for (const q of loadBank(src)) {
@@ -82,31 +85,18 @@ for (const exam of EXAMS) {
       if (!Number.isInteger(q.correctIndex) || q.correctIndex < 0 || q.correctIndex > 3)
         throw new Error(`${id}: correctIndex غير صالح (${q.correctIndex})`);
       seen.add(id);
-      publicQuestions.push({ id, text: q.question, options: q.options });
+      ids.push(id);
+      content[id] = { t: q.question, o: q.options };
       keys[id] = q.correctIndex;
     }
   }
 
-  if (publicQuestions.length < QUESTIONS_PER_EXAM)
-    throw new Error(`${exam.examId}: البنك يحتوي ${publicQuestions.length} فقط (< ${QUESTIONS_PER_EXAM})`);
-
-  // ملف عام — بدون correctIndex إطلاقاً
-  writeFileSync(
-    join(ROOT, "data", `${exam.examId}.json`),
-    JSON.stringify(
-      {
-        examId: exam.examId,
-        title: exam.title,
-        version: manifest.version,
-        questions: publicQuestions,
-      },
-      null,
-      1
-    )
-  );
+  if (ids.length < QUESTIONS_PER_EXAM)
+    throw new Error(`${exam.examId}: البنك يحتوي ${ids.length} فقط (< ${QUESTIONS_PER_EXAM})`);
 
   answerKeys[exam.examId] = keys;
-  bankIndex[exam.examId] = publicQuestions.map((q) => q.id);
+  bankIndex[exam.examId] = ids;
+  questionsData[exam.examId] = content;
 
   manifest.exams.push({
     examId: exam.examId,
@@ -115,11 +105,10 @@ for (const exam of EXAMS) {
     duration_minutes: DURATION_MINUTES,
     total_score: TOTAL_SCORE,
     question_count: QUESTIONS_PER_EXAM,
-    bank_size: publicQuestions.length,
-    data_file: `data/${exam.examId}.json`,
+    bank_size: ids.length,
   });
 
-  console.log(`✔ ${exam.examId}: ${publicQuestions.length} سؤالاً في البنك`);
+  console.log(`✔ ${exam.examId}: ${ids.length} سؤالاً في البنك`);
 }
 
 writeFileSync(join(ROOT, "data", "manifest.json"), JSON.stringify(manifest, null, 2));
@@ -137,5 +126,9 @@ writeFileSync(
   "// ملف مولَّد تلقائياً بواسطة tools/build-data.mjs — لا تعدّله يدوياً.\n" +
     "export default " + JSON.stringify(bankIndex) + ";\n"
 );
+writeFileSync(
+  join(ROOT, "server", "questions-data.js"),
+  HEADER + "export default " + JSON.stringify(questionsData) + ";\n"
+);
 
-console.log("✔ تم توليد data/*.json و server/answer-keys.js و server/bank-index.js");
+console.log("✔ تم توليد data/manifest.json و server/{questions-data,answer-keys,bank-index}.js");

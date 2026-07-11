@@ -2,17 +2,24 @@
  * exam-api.js — المنطق المشترك لإنشاء جلسات الاختبار وتصحيحها.
  * يعمل في Cloudflare Workers وفي Node.js (18+) — يعتمد Web Crypto فقط.
  *
- * المبدأ الأمني: الإجابات الصحيحة (answer-keys.js) لا تغادر السيرفر أبداً.
- * الجلسة عبارة عن توكن موقّع HMAC يحدد: الاختبار، الأسئلة المختارة، الدرجات،
- * ووقت البداية/الانتهاء — فلا يستطيع الطالب تعديل أي منها.
+ * المبدأ الأمني:
+ *  - الإجابات الصحيحة (answer-keys.js) لا تغادر السيرفر أبداً.
+ *  - نصوص الأسئلة نفسها (questions-data.js) تعيش في السيرفر فقط — لا يوجد أي
+ *    ملف ثابت بالمتصفح يحتوي أسئلة. الطالب يستلم 20 سؤالاً فقط (صفحته الحالية)
+ *    عبر /api/questions، والحمولة مشفرة AES-GCM بمفتاح مشتق من توكن جلسته،
+ *    فلا يظهر في تبويب Network أي نص سؤال.
+ *  - الجلسة توكن موقّع HMAC يحدد: الاختبار، الأسئلة المختارة، الدرجات،
+ *    ووقت البداية/الانتهاء — فلا يستطيع الطالب تعديل أي منها.
  */
 import ANSWER_KEYS from "./answer-keys.js";
 import BANK_INDEX from "./bank-index.js";
+import QUESTIONS from "./questions-data.js";
 
 export const EXAM_RULES = {
   questionCount: 60,
   durationMinutes: 60,
   totalScore: 100,
+  pageSize: 20,           // الأسئلة تُسلَّم صفحةً صفحة، لا دفعة واحدة
   submitGraceSeconds: 30, // سماحية بسيطة لتأخر الشبكة عند التسليم التلقائي
   minPoints: 0.8,         // أقل درجة ممكنة لسؤال (التوزيع عشوائي)
   maxPoints: 2.6,         // أعلى درجة ممكنة لسؤال
@@ -50,6 +57,44 @@ async function sign(payloadB64, secret) {
   const key = await hmacKey(secret);
   const sig = await crypto.subtle.sign("HMAC", key, enc.encode(payloadB64));
   return b64url(new Uint8Array(sig));
+}
+
+/** التحقق من توكن الجلسة وفك حمولته — يُستخدم في تسليم الأسئلة والتصحيح */
+async function verifyToken(token, secret) {
+  if (typeof token !== "string" || !token.includes(".")) return null;
+  const [payloadB64, sig] = token.split(".");
+  if (sig !== (await sign(payloadB64, secret))) return null;
+  try {
+    const payload = JSON.parse(new TextDecoder().decode(b64urlDecode(payloadB64)));
+    if (payload.v !== 1 || !ANSWER_KEYS[payload.examId] || !Array.isArray(payload.qs)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * تشفير AES-GCM لحمولة الأسئلة بمفتاح مشتق من توكن الجلسة.
+ * الهدف: ألا يظهر أي نص سؤال في تبويب Network بأدوات المطوّر — الحمولة
+ * المنقولة نص مشفر، والمتصفح يفكّها في الذاكرة لحظة العرض فقط.
+ * (ملاحظة صريحة: المفتاح مشتق من التوكن الذي يملكه صاحب الجلسة نفسه،
+ * فهذه حماية عرضٍ وتعميةٌ للنقل، أما السرية الحقيقية فمصدرها أن البنك
+ * الكامل لا يغادر السيرفر أصلاً.)
+ */
+async function deriveAesKey(token) {
+  const digest = await crypto.subtle.digest("SHA-256", enc.encode("enjaz-exam-q1|" + token));
+  return crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+}
+
+async function encryptForSession(token, data) {
+  const key = await deriveAesKey(token);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const cipher = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    enc.encode(JSON.stringify(data))
+  );
+  return { iv: b64url(iv), data: b64url(new Uint8Array(cipher)) };
 }
 
 /** خلط آمن (Fisher–Yates) بأرقام عشوائية من crypto */
@@ -139,6 +184,39 @@ export async function createSession(body, secret) {
   };
 }
 
+/* ---------- تسليم أسئلة صفحة واحدة (مشفرة) ---------- */
+
+/**
+ * يسلّم أسئلة صفحة واحدة (20 سؤالاً) من جلسة قائمة — نصوص الأسئلة لا توجد
+ * في أي ملف ثابت، وتصل للمتصفح مشفرة AES-GCM بمفتاح مشتق من توكن الجلسة.
+ * @param {object} body { token, page: 0..2 }
+ */
+export async function getQuestions(body, secret) {
+  const payload = await verifyToken(body && body.token, secret);
+  if (!payload) return { status: 401, error: "bad_token", message: "جلسة غير موثوقة" };
+
+  const now = Date.now();
+  if (now > payload.exp + EXAM_RULES.submitGraceSeconds * 1000)
+    return { status: 403, error: "session_expired", message: "انتهت مدة الاختبار" };
+
+  const pageCount = Math.ceil(payload.qs.length / EXAM_RULES.pageSize);
+  const page = body.page;
+  if (!Number.isInteger(page) || page < 0 || page >= pageCount)
+    return { status: 400, error: "bad_page", message: "رقم صفحة غير صالح" };
+
+  const content = QUESTIONS[payload.examId];
+  const slice = payload.qs.slice(page * EXAM_RULES.pageSize, (page + 1) * EXAM_RULES.pageSize);
+  const questions = slice.map(([id, pts]) => ({
+    id,
+    points: pts,
+    text: content[id].t,
+    options: content[id].o,
+  }));
+
+  const encrypted = await encryptForSession(body.token, { page, questions });
+  return { status: 200, data: { page, enc: encrypted } };
+}
+
 /* ---------- تصحيح الإجابات ---------- */
 
 /**
@@ -147,25 +225,11 @@ export async function createSession(body, secret) {
  * @param {string} secret
  */
 export async function gradeSession(body, secret) {
-  const token = body && body.token;
-  if (typeof token !== "string" || !token.includes("."))
-    return { status: 400, error: "bad_token", message: "جلسة غير صالحة" };
-
-  const [payloadB64, sig] = token.split(".");
-  const expected = await sign(payloadB64, secret);
-  if (sig !== expected)
-    return { status: 401, error: "invalid_signature", message: "جلسة غير موثوقة" };
-
-  let payload;
-  try {
-    payload = JSON.parse(new TextDecoder().decode(b64urlDecode(payloadB64)));
-  } catch {
-    return { status: 400, error: "bad_token", message: "جلسة غير صالحة" };
-  }
+  const payload = await verifyToken(body && body.token, secret);
+  if (!payload) return { status: 401, error: "bad_token", message: "جلسة غير موثوقة" };
 
   const keys = ANSWER_KEYS[payload.examId];
-  if (payload.v !== 1 || !keys || !Array.isArray(payload.qs))
-    return { status: 400, error: "bad_token", message: "جلسة غير صالحة" };
+  const content = QUESTIONS[payload.examId];
 
   const now = Date.now();
   if (now > payload.exp + EXAM_RULES.submitGraceSeconds * 1000)
@@ -178,7 +242,9 @@ export async function gradeSession(body, secret) {
   const answers = (body && body.answers) || {};
   let score = 0;
   let correctCount = 0;
-  const review = []; // الأسئلة الخاطئة/غير المجابة فقط + إجابتها الصحيحة
+  // الأسئلة الخاطئة/غير المجابة فقط، بنصّها وخياراتها وحلّها الصحيح —
+  // كشفها هنا مقصود: صفحة النتيجة تعرضها للمراجعة بعد انتهاء الجلسة
+  const review = [];
 
   for (const [id, pts] of payload.qs) {
     const correct = keys[id];
@@ -188,7 +254,14 @@ export async function gradeSession(body, secret) {
       score += pts;
       correctCount++;
     } else {
-      review.push({ id, points: pts, chosen, correct });
+      review.push({
+        id,
+        points: pts,
+        chosen,
+        correct,
+        text: content[id].t,
+        options: content[id].o,
+      });
     }
   }
 
