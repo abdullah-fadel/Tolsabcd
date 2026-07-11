@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "exams": [
+    {
+      "examId": "arabic",
+      "title": "اختبار اللغة العربية",
+      "description": "النحو والصرف والإملاء والأدب — لطلبة الدراسات العليا",
+      "duration_minutes": 60,
+      "total_score": 100,
+      "question_count": 60,
+      "bank_size": 510,
+      "data_file": "data/arabic.json"
+    },
+    {
+      "examId": "english",
+      "title": "اختبار اللغة الإنجليزية",
+      "description": "القواعد والأزمنة وحروف الجر والأدب والاستيعاب القرائي",
+      "duration_minutes": 60,
+      "total_score": 100,
+      "question_count": 60,
+      "bank_size": 700,
+      "data_file": "data/english.json"
+    },
+    {
+      "examId": "computer",
+      "title": "اختبار الحاسوب",
+      "description": "أساسيات الحاسوب، وورد، إكسل، باوربوينت، الإنترنت وأمن المعلومات",
+      "duration_minutes": 60,
+      "total_score": 100,
+      "question_count": 60,
+      "bank_size": 567,
+      "data_file": "data/computer.json"
+    }
+  ]
+}

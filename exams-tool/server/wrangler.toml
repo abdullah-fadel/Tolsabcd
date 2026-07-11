@@ -1,0 +1,19 @@
+# إعداد Cloudflare Worker لأداة الاختبارات
+# النشر:
+#   cd exams-tool/server
+#   npx wrangler secret put EXAM_SECRET   ← سر عشوائي طويل (مرة واحدة)
+#   npx wrangler deploy
+name = "enjaz-exams"
+main = "worker.js"
+compatibility_date = "2025-06-01"
+
+# الواجهة الثابتة تُقدَّم من مجلد الأداة نفسه.
+# ملف exams-tool/.assetsignore يستبعد server/ و question-banks/ و tools/
+# حتى لا تُنشر الإجابات الصحيحة كملفات ثابتة أبداً.
+[assets]
+directory = ".."
+binding = "ASSETS"
+
+# اختياري: لتقييد الـ API على أصل الموقع فقط (يفعَّل عند ربط الأداة بنطاق المنصة)
+# [vars]
+# ALLOWED_ORIGINS = "https://example.com"

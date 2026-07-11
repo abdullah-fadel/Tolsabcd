@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>اختبار | مكتبة الإنجاز الإلكترونية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="exam-engine.css" />
+</head>
+<body data-page="exam">
+  <div id="exam-topbar" class="exam-topbar hidden">
+    <span id="exam-name" class="exam-name"></span>
+    <span id="answered-count" class="answered-count"></span>
+    <span id="timer" class="timer">60:00</span>
+  </div>
+
+  <main>
+    <div id="exam-root">
+      <div class="loading">جارٍ التحميل…</div>
+    </div>
+  </main>
+
+  <!-- نافذة تأكيد التسليم النهائي -->
+  <div id="submit-modal" class="modal-backdrop hidden">
+    <div class="modal">
+      <h3>التسليم النهائي</h3>
+      <p id="submit-modal-msg"></p>
+      <div class="modal-actions">
+        <button id="submit-confirm" class="btn btn-gold">نعم، سلّم الاختبار</button>
+        <button id="submit-cancel" class="btn btn-outline">عودة للأسئلة</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="exam-engine.js"></script>
+</body>
+</html>
